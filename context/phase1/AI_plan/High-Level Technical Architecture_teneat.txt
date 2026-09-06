@@ -1,0 +1,54 @@
+ High-Level Technical Architecture
+1. The Tech Stack
+Backend: Django (Python)
+API Layer: Django REST Framework (DRF) — Crucial for Android integration.
+Database: PostgreSQL (Recommended for relational data like properties and payments).
+Frontend (Web): Django Templates + Bootstrap/Tailwind (Server-side rendering).
+Frontend (Mobile): Android (Kotlin/Java) consuming JSON via REST API.
+Authentication:
+Web: Session-based authentication.
+Mobile: JWT (JSON Web Tokens) for stateless, secure API access.
+2. Logical Data Model (The Core)
+To support your requirements, we will implement a Role-Based Access Control (RBAC) system:
+
+User Model: Custom User model extending AbstractUser with roles: SUPER_ADMIN, OWNER, TENANT.
+Property Model: Linked to the Owner. (One-to-Many: One owner $\rightarrow$ many properties).
+Lease/Agreement Model: Links a Tenant to a Property. Stores start date, end date, and monthly rent amount.
+Payment Model: Linked to the Lease. Stores month, year, amount, payment date, and Status (Pending, Approved, Rejected).
+3. System Workflow
+Super Admin: Creates Owner accounts $\rightarrow$ Owners create Properties $\rightarrow$ Owners assign Tenants to Properties.
+Owner $\rightarrow$ System: Views a filtered list of properties $\rightarrow$ Views payments filtered by their properties $\rightarrow$ Updates payment status to "Approved".
+Tenant $\rightarrow$ System: Views their specific Lease $\rightarrow$ Posts a payment record $\rightarrow$ Polls/Checks status of payment.
+📝 Project Blueprint (Use this as your future prompt)
+Copy and save the section below. You can feed this back to me or any AI to start the actual coding phase.
+
+Project Name: House Rent Management System (HRMS) Architecture Style: Hybrid Monolith (Django Web + DRF API)
+
+User Roles & Permissions:
+
+Super Admin: Full system CRUD. Manages House Owners.
+House Owner: Manages own properties. Views rent history. Approves/Rejects tenant payments.
+Tenant: Views lease duration. Submits monthly payments. Tracks payment approval status.
+Core Entities:
+
+User (Custom model with Roles)
+Property (Linked to Owner)
+Lease (Links Tenant to Property, defines duration and rent)
+Payment (Linked to Lease, tracks month, amount, and approval status)
+Interface Requirements:
+
+Web Portal: Built with Django Templates for Admin, Owners, and Tenants.
+Android App: RESTful API endpoints via Django REST Framework (DRF) using JWT Authentication.
+Key Business Logic:
+
+Data Isolation: Owners can only see their own properties; Tenants can only see their own leases.
+Payment Workflow: Tenant Submit $\rightarrow$ Pending State $\rightarrow$ Owner Review $\rightarrow$ Approved/Rejected State.
+🚀 Architect's Suggestions for Next Steps:
+When we move to the implementation phase, I suggest we tackle it in this order:
+
+Phase 1: Database Schema & Custom User Model (Setting the foundation).
+Phase 2: Super Admin & Owner Logic (The management side).
+Phase 3: Tenant Portal & Payment Workflow (The user side).
+Phase 4: REST API Layer (Turning the logic into endpoints for the Android app).
+Phase 5: Security & Validation (Ensuring an owner cannot accidentally see another owner's data).
+Would you like me to start with the Database Schema (Phase 1) now?

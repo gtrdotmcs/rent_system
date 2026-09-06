@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owner Overview</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-dark bg-primary mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'property_list' %}">Rent System - Owner Dashboard</a>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>My Rent Overview</h2>
+            <a href="{% url 'property_list' %}" class="btn btn-outline-primary">Manage Properties</a>
+        </div>
+
+        <div class="row">
+            {% for item in property_data %}
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ item.property.name }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">{{ item.property.city }}</h6>
+                        <hr>
+                        <div class="mb-2">
+                            <strong>Status:</strong> 
+                            {% if item.active_lease %}
+                                <span class="badge bg-success">Occupied</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">Vacant</span>
+                            {% endif %}
+                        </div>
+                        <div class="mb-2">
+                            <strong>Tenant:</strong> 
+                            {{ item.tenant.get_full_name|default:item.tenant.username }} {% if not item.tenant %}None{% endif %}
+                        </div>
+                        <div class="mb-3">
+                            <strong>Monthly Rent:</strong> 
+                            ${{ item.rent }}
+                        </div>
+                        {% if item.active_lease %}
+                            <a href="#" class="btn btn-sm btn-primary w-100">View Payment History</a>
+                        {% else %}
+                            <a href="{% url 'lease_create' %}" class="btn btn-sm btn-outline-success w-100">Assign Tenant</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <p class="lead">You have no properties yet.</p>
+                <a href="{% url 'property_create' %}" class="btn btn-primary">Add Your First Property</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

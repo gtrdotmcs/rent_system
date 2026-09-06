@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Submit Rent Payment</h2>
+    <div class="card mt-3">
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-success">Submit Payment</button>
+                <a href="{% url 'tenant_lease_dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
