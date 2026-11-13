@@ -1,6 +1,7 @@
 from rest_framework import serializers
+from django.conf import settings
 
-from .models import Lease, Payment, Property
+from .models import Lease, Payment, Property, User
 
 
 class PropertySerializer(serializers.ModelSerializer):
@@ -49,3 +50,9 @@ class PaymentSerializer(serializers.ModelSerializer):
         if value <= 0:
             raise serializers.ValidationError("Amount paid must be positive.")
         return value
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["username", "email", "first_name", "last_name", "role"]

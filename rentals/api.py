@@ -2,7 +2,7 @@ from rest_framework import generics, permissions, serializers, status
 from rest_framework.response import Response
 
 from .models import Lease, Payment, Property
-from .serializers import LeaseSerializer, PaymentSerializer, PropertySerializer
+from .serializers import LeaseSerializer, PaymentSerializer, PropertySerializer, UserProfileSerializer
 
 
 class IsOwner(permissions.BasePermission):
@@ -98,6 +98,14 @@ class TenantPaymentListCreateView(generics.ListCreateAPIView):
         serializer.save(lease=lease, status=Payment.Status.PENDING)
 
 
+class UserProfileView(generics.RetrieveAPIView):
+    serializer_class = UserProfileSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+
+
 class OwnerPaymentStatusView(generics.UpdateAPIView):
     serializer_class = PaymentSerializer
     permission_classes = [IsOwner, IsOwnerOfProperty]
@@ -118,3 +126,14 @@ class OwnerPaymentStatusView(generics.UpdateAPIView):
         payment.status = new_status
         payment.save(update_fields=["status"])
         return Response(self.get_serializer(payment).data)
+
+
+class OwnerPendingPaymentsView(generics.ListAPIView):
+    serializer_class = PaymentSerializer
+    permission_classes = [IsOwner]
+
+    def get_queryset(self):
+        return Payment.objects.filter(
+            lease__property__owner=self.request.user, 
+            status=Payment.Status.PENDING
+        ).select_related("lease__property").order_by("-payment_date")
